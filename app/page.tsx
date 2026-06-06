@@ -4,7 +4,7 @@ import { useAppGlobal } from './context/AppContext';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const { intake, burned, water, meals, addIntake, removeMeal, addWater, resetWater, userName } = useAppGlobal();
+  const { burned, water, meals, addIntake, removeMeal, addWater, resetWater, userName } = useAppGlobal();
   const [showFoodForm, setShowFoodForm] = useState(false);
   const [foodName, setFoodName] = useState('');
   const [foodKcal, setFoodKcal] = useState('');
@@ -17,6 +17,9 @@ export default function HomePage() {
     setFoodKcal('');
     setShowFoodForm(false);
   };
+
+  // FIX: Calculate total intake calories dynamically from your meals list
+  const intake = meals.reduce((sum, meal) => sum + meal.calories, 0);
 
   const netCalories = intake - burned;
   const energyProgress = Math.min(100, Math.round((intake / 2300) * 100));
@@ -46,7 +49,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Energy Rings Display Wrapper Card */}
+      {/* Energy Balance Wrapper Card */}
       <div className="rounded-2xl border border-slate-800 bg-slate-900/50 p-5 space-y-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div>
@@ -86,11 +89,11 @@ export default function HomePage() {
         {/* Inline Food Logger Toggle Window */}
         {showFoodForm ? (
           <form onSubmit={handleLogFood} className="bg-slate-950 border border-slate-800/80 p-3 rounded-xl space-y-2 mt-2">
-            <input 
+            <input
               type="text" placeholder="Food item name..." value={foodName} onChange={(e) => setFoodName(e.target.value)}
               className="w-full bg-slate-900 border border-slate-800 p-2 text-xs rounded-lg focus:outline-none focus:border-emerald-500" required
             />
-            <input 
+            <input
               type="number" placeholder="Calories (kcal)..." value={foodKcal} onChange={(e) => setFoodKcal(e.target.value)}
               className="w-full bg-slate-900 border border-slate-800 p-2 text-xs rounded-lg focus:outline-none focus:border-emerald-500" required
             />

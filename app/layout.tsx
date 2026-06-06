@@ -3,6 +3,7 @@ import './globals.css';
 import { usePathname } from 'next/navigation';
 import { AppProvider } from './context/AppContext';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next'; // 1. Imported Vercel Analytics
 
 export default function RootLayout({
   children,
@@ -66,6 +67,9 @@ export default function RootLayout({
 
         {/* Performance Metric Monitor */}
         <SpeedInsights />
+
+        {/* 2. Web Analytics Tracking Script */}
+        <Analytics />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useAppGlobal } from './context/AppContext';
+import Link from 'next/link';
 
 export default function HomePage() {
   const { intake, burned, water, meals, addIntake, removeMeal, addWater, resetWater, userName } = useAppGlobal();
@@ -21,7 +22,7 @@ export default function HomePage() {
   const energyProgress = Math.min(100, Math.round((intake / 2300) * 100));
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-5 p-4 text-slate-100 pb-24">
+    <div className="w-full max-w-md mx-auto space-y-5 p-4 text-slate-100 pb-28 relative">
       {/* Upper Profile Banner */}
       <div className="flex items-center justify-between pt-2">
         <div>
@@ -124,6 +125,28 @@ export default function HomePage() {
           </button>
         </div>
       </div>
+
+      {/* Premium Fixed Bottom Navigation Dock */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-slate-950/80 border border-slate-800 rounded-2xl h-16 flex justify-around items-center backdrop-blur-xl shadow-2xl z-50 px-2">
+        <Link href="/" className="flex flex-col items-center justify-center w-12 h-12 rounded-xl text-emerald-400 bg-emerald-500/10">
+          <span className="text-lg">🏠</span>
+          <span className="text-[9px] font-black tracking-wide mt-0.5">Home</span>
+        </Link>
+        <Link href="/workouts" className="flex flex-col items-center justify-center w-12 h-12 rounded-xl text-slate-400 hover:text-slate-200 transition-colors">
+          <span className="text-lg">💪
+            </span>
+          <span className="text-[9px] font-bold tracking-wide mt-0.5">Workout</span>
+        </Link>
+        <Link href="/stats" className="flex flex-col items-center justify-center w-12 h-12 rounded-xl text-slate-400 hover:text-slate-200 transition-colors">
+          <span className="text-lg">📊</span>
+          <span className="text-[9px] font-bold tracking-wide mt-0.5">Stats</span>
+        </Link>
+        <Link href="/profile" className="flex flex-col items-center justify-center w-12 h-12 rounded-xl text-slate-400 hover:text-slate-200 transition-colors">
+          <span className="text-lg">👤</span>
+          <span className="text-[9px] font-bold tracking-wide mt-0.5">Profile</span>
+        </Link>
+      </div>
+
     </div>
   );
 }

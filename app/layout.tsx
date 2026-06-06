@@ -1,6 +1,6 @@
-'use client'
+'use client';
 import './globals.css';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { AppProvider } from './context/AppContext';
 
 export default function RootLayout({
@@ -9,13 +9,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
 
   const navItems = [
-    { label: 'Home', path: '/', icon: '🏠' },
-    { label: 'Workouts', path: '/workouts', icon: '💪' },
-    { label: 'Stats', path: '/stats', icon: '📊' },
-    { label: 'Profile', path: '/profile', icon: '🏆' },
+    { label: 'Home', path: '/', activeIcon: '🏠', inactiveIcon: '🏠' },
+    { label: 'Workouts', path: '/workouts', activeIcon: '🏋️‍♂️', inactiveIcon: '🏋️‍♂️' },
+    { label: 'Stats', path: '/stats', activeIcon: '📊', inactiveIcon: '📊' },
+    { label: 'Profile', path: '/profile', activeIcon: '🏆', inactiveIcon: '🏆' },
   ];
 
   return (
@@ -44,11 +43,14 @@ export default function RootLayout({
                 return (
                   <button
                     key={item.path}
-                    onClick={() => router.push(item.path)}
-                    className="flex flex-col items-center gap-1 flex-1 transition active:scale-95 group"
+                    onClick={() => {
+                      // Using native window location changes to force live server navigation
+                      window.location.href = item.path;
+                    }}
+                    className="flex flex-col items-center gap-1 flex-1 transition active:scale-95 group text-center bg-transparent border-none outline-none cursor-pointer"
                   >
                     <span className={`text-xl transition duration-200 ${isActive ? 'scale-110' : 'opacity-50 group-hover:opacity-80'}`}>
-                      {item.icon}
+                      {isActive ? item.activeIcon : item.inactiveIcon}
                     </span>
                     <span className={`text-[10px] font-bold tracking-wide transition duration-200 ${isActive ? 'text-emerald-400 font-black' : 'text-slate-500 font-medium'}`}>
                       {item.label}

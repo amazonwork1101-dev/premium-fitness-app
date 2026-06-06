@@ -133,8 +133,7 @@ export default function HomePage() {
           <span className="text-[9px] font-black tracking-wide mt-0.5">Home</span>
         </Link>
         <Link href="/workouts" className="flex flex-col items-center justify-center w-12 h-12 rounded-xl text-slate-400 hover:text-slate-200 transition-colors">
-          <span className="text-lg">💪
-            </span>
+          <span className="text-lg">🏋️‍♂️</span>
           <span className="text-[9px] font-bold tracking-wide mt-0.5">Workout</span>
         </Link>
         <Link href="/stats" className="flex flex-col items-center justify-center w-12 h-12 rounded-xl text-slate-400 hover:text-slate-200 transition-colors">
@@ -142,7 +141,7 @@ export default function HomePage() {
           <span className="text-[9px] font-bold tracking-wide mt-0.5">Stats</span>
         </Link>
         <Link href="/profile" className="flex flex-col items-center justify-center w-12 h-12 rounded-xl text-slate-400 hover:text-slate-200 transition-colors">
-          <span className="text-lg">👤</span>
+          <span className="text-lg">🏆</span>
           <span className="text-[9px] font-bold tracking-wide mt-0.5">Profile</span>
         </Link>
       </div>

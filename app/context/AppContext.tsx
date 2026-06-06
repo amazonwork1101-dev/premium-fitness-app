@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase } from '../supabase'; 
+import { supabase } from '../supabase';
 import { User } from '@supabase/supabase-js';
 
 interface MealItem {
@@ -53,8 +53,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [water, setWater] = useState(0);
   const [userName, setUserName] = useState('Alex Rivers');
   const [loading, setLoading] = useState(true);
-  
-  // Lists for dynamic tracking
+
   const [meals, setMeals] = useState<MealItem[]>([]);
   const [workouts, setWorkouts] = useState<WorkoutItem[]>([]);
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
@@ -97,10 +96,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         await loadUserData(session.user.id);
       } else {
-        // Reset local states back to defaults on logout
-        setIntake(1840);
-        setBurned(620);
-        setWater(1.2);
+        // FIXED: Clean defaults reset on sign out (No baseline numbers stuck in state)
+        setIntake(0);
+        setBurned(0);
+        setWater(0);
         setUserName('Alex Rivers');
         setMeals([]);
         setWorkouts([]);
@@ -118,12 +117,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (profile?.username) setUserName(profile.username);
 
       const today = new Date().toISOString().split('T')[0];
-      let { data: logs, error } = await supabase.from('fitness_logs').select('*').eq('user_id', userId).eq('log_date', today).single();
+      let { data: logs } = await supabase.from('fitness_logs').select('*').eq('user_id', userId).eq('log_date', today).single();
 
       if (logs) {
-        setIntake(logs.intake);
-        setBurned(logs.burned);
-        setWater(Number(logs.water));
+        setIntake(logs.intake || 0);
+        setBurned(logs.burned || 0);
+        setWater(Number(logs.water) || 0);
       }
     } catch (err) {
       console.error('Error synchronizing with database state:', err);
@@ -159,6 +158,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setIntake((prev) => {
       const nextVal = Math.max(0, prev - calories);
       localStorage.setItem('premium_fitness_intake', nextVal.toString());
+      if (user) {
+        const today = new Date().toISOString().split('T')[0];
+        supabase.from('fitness_logs').upsert({ user_id: user.id, log_date: today, intake: nextVal }).then();
+      }
       return nextVal;
     });
   };
@@ -191,6 +194,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setBurned((prev) => {
       const nextVal = Math.max(0, prev - calories);
       localStorage.setItem('premium_fitness_burned', nextVal.toString());
+      if (user) {
+        const today = new Date().toISOString().split('T')[0];
+        supabase.from('fitness_logs').upsert({ user_id: user.id, log_date: today, burned: nextVal }).then();
+      }
       return nextVal;
     });
   };
@@ -212,6 +219,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('premium_fitness_water', '0');
     if (user) {
       const today = new Date().toISOString().split('T')[0];
+      // FIXED: Forces database to explicitly log 0 liters immediately
       await supabase.from('fitness_logs').upsert({ user_id: user.id, log_date: today, water: 0 });
     }
   };
@@ -241,9 +249,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={{ 
+    <AppContext.Provider value={{
       user, intake, burned, water, userName, loading, meals, workouts, youtubeVideos,
-      addIntake, removeMeal, addBurned, removeWorkout, addWater, resetWater, addYouTubeVideo, removeYouTubeVideo, setUserName: setUserNameWithDB 
+      addIntake, removeMeal, addBurned, removeWorkout, addWater, resetWater, addYouTubeVideo, removeYouTubeVideo, setUserName: setUserNameWithDB
     }}>
       {children}
     </AppContext.Provider>
